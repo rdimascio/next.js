@@ -1,15 +1,15 @@
 import dynamic from 'next/dynamic';
-import Login from '../components/login';
+import Login from '../core/frontend/login';
 import { useSession, getSession, getProviders } from 'next-auth/client';
 
 const Editor = dynamic(
-    () => import('../components/editor'),
+    () => import('../core/server/Editor'),
     {
         ssr: false
     }
 );
 
-export default function Admin ({providers}) {
+export default function Admin ({providers, config}) {
   const [ session ] = useSession();
 
   return !session ? <Login providers={providers} /> : <Editor />;
