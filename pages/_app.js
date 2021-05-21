@@ -2,25 +2,35 @@ import '../core/styles/global.css';
 import Head from 'next/head';
 import { Provider } from 'next-auth/client';
 import config from '../.zen/config.json';
-// import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 
-// const CustomHead = dynamic(
-// 	() => import(`../content/themes/${config.theme}/components/Head`).catch(
-// 		() => () => (
-// 			<Head>
-// 				<title>Zen</title>
-// 				<meta
-// 					name="viewport"
-// 					content="width=device-width, initial-scale=1, shrink-to-fit=no"
-// 				/>
-// 			</Head>
-// 		)
-// 	),
-// );
+const getCustomHead = (config) => dynamic(
+	() => import(`../content/themes/${config.theme}/components/Head`).catch(
+		() => () => (
+			<Head>
+				<title>Zen</title>
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1, shrink-to-fit=no"
+				/>
+			</Head>
+		)
+	)
+);
 
 // Use the <Provider> to improve performance and allow components that call
 // `useSession()` anywhere in your application to access the `session` object.
 export default function App ({ Component, pageProps }) {
+	const CustomHead = getCustomHead(config);
+	const router = useRouter();
+	const {page, ...params} = router.query;
+	const props = {
+		...pageProps,
+		config,
+		currentPage: page,
+		query: params,
+	};
 
 	return (
 		<Provider
@@ -42,7 +52,24 @@ export default function App ({ Component, pageProps }) {
 				keepAlive: 0
 			}}
 			session={pageProps.session}>
-			<Component {...pageProps} config={config} />
+			<CustomHead />
+			<main id="primary">
+				<div id={page} className="default-page default-page--content-only">
+					<div className="default-page__main-area">
+						<div className="default-page__main-area-inner">
+							<article itemScope itemType="https://schema.org/BlogPosting" className="default-page__content">
+								<div itemProp="mainEntityOfPage">
+									<div className="default-page__body">
+										<div itemProp="articleBody" className="entry-content entry-content--default-page">
+											<Component {...props} />
+										</div>
+									</div>
+								</div>
+							</article>
+						</div>
+					</div>
+				</div>
+			</main>
 		</Provider>
 	);
 };

@@ -1,27 +1,7 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
+import config from '../.zen/config.json';
 
 const isDev = process.env.NODE_ENV === 'development';
-
-class ZenHead extends Head {
-    render() {
-        const { head } = this.context;
-        const { children } = this.props;
-
-        return (
-            <Head {...this.props}>
-                {children}
-                {head}
-            </Head>
-        );
-    }
-}
-
-class ZenMain extends Main {
-	render() {
-		const { html } = this.context;
-		return <div dangerouslySetInnerHTML={{ __html: html }} />;
-	}
-}
 
 class ZenDocument extends Document {
 	static async getInitialProps(ctx) {
@@ -31,7 +11,7 @@ class ZenDocument extends Document {
 
 	render() {
 		return (
-			<Html lang="en">
+			<Html lang={config.language}>
 				<Head />
 				<body>
 					<Main />
