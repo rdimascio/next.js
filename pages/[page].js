@@ -1,9 +1,10 @@
 import dynamic from 'next/dynamic';
+import FourOhFour from '../core/frontend/404';
 
 const getCustomPath = ({theme, page}) => dynamic(
 	() => import(`../content/themes/${theme}/pages/${page}`).catch(
 		() => () => (
-			`Hey there from ${page} :)`
+			<FourOhFour />
 		)
 	),
     {
